@@ -1,8 +1,8 @@
-name: Deploy to App Runner - Source # Name of the workflow
+name: Deploy to App Runner - Source # nombre del flujo de trabajo
 on:
   push:
-    branches: [ main ] # Trigger workflow on git push to main branch
-  workflow_dispatch: # Allow manual invocation of the workflow
+    branches: [ main ] # Trigger que se activa cuando se hace push a main
+  workflow_dispatch: # Permitir la invocación manual del trabajo
 
 jobs:  
   deploy:
