@@ -1,0 +1,37 @@
+name: Deploy to App Runner - Source # Name of the workflow
+on:
+  push:
+    branches: [ main ] # Trigger workflow on git push to main branch
+  workflow_dispatch: # Allow manual invocation of the workflow
+
+jobs:  
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:            
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1 # Configura las credenciales de aws
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+          
+      - name: Deploy to App Runner
+        id: deploy-apprunner
+        uses: awslabs/amazon-app-runner-deploy@main # Despliega el servicio app runner
+        with:
+          service: app-runner-git-deploy-service
+          source-connection-arn: ${{ secrets.AWS_CONNECTION_SOURCE_ARN }}
+          repo: https://github.com/Renzo1987/ejecicio_git_acctions.git
+          branch: main
+          runtime: PYTHON_3
+          build-command: pip install -r requirements.txt
+          start-command: python app.py
+          port: 8080
+          region: ${{ secrets.AWS_REGION }}
+          cpu : 1
+          memory : 2
+          wait-for-service-stability: true
+      
+      - name: App Runner output
+        run: echo "la aplicacion se muestra por ${{ steps.deploy-apprunner.outputs.service-id }}"
